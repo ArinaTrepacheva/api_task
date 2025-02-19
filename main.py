@@ -21,8 +21,8 @@ class MainWindow(QMainWindow):
         self.map_ll = [37.977751, 55.757718]
         self.map_l = 'map'
         self.map_key = ''
-
         self.refresh_map()
+        self.radioButton.toggled.connect(self.refresh_map)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp and self.map_zoom < 17:
@@ -40,6 +40,7 @@ class MainWindow(QMainWindow):
         self.refresh_map()
 
     def refresh_map(self):
+        t = 'dark' if self.radioButton.isChecked() else 'light'
         map_params = {
             "ll": ','.join(map(str, self.map_ll)),
             "l": self.map_l,
@@ -50,8 +51,9 @@ class MainWindow(QMainWindow):
         adapter = HTTPAdapter(max_retries=retry)
         session.mount('http://', adapter)
         session.mount('https://', adapter)
-        response = session.get('https://static-maps.yandex.ru/1.x/',
-                                params=map_params)
+        n = ','.join(map(str, self.map_ll))
+        d = f'https://static-maps.yandex.ru/v1?ll={n}&l={self.map_l}&z={self.map_zoom}&theme={t}&apikey=f3a0fe3a-b07e-4840-a1da-06f18b2ddf13'
+        response = session.get(d)
         with open('tmp.png', mode='wb') as tmp:
             tmp.write(response.content)
 
