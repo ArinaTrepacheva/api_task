@@ -26,13 +26,14 @@ class MainWindow(QMainWindow):
         self.radioButton.toggled.connect(self.refresh_map)
         self.button.clicked.connect(self.find)
         self.dell.clicked.connect(self.delete_point)
+        self.index.stateChanged.connect(self.find)
 
     def delete_point(self):
         self.lineEdit.setText('')
         self.cords = ''
         self.address.setText('')
         self.refresh_map()
-
+        self.index.setCheckable(False)
 
     def find(self):
         geocode = self.lineEdit.text()
