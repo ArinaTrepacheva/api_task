@@ -28,6 +28,7 @@ class MainWindow(QMainWindow):
         self.dell.clicked.connect(self.delete_point)
 
     def delete_point(self):
+        self.lineEdit.setText('')
         self.cords = ''
         self.address.setText('')
         self.refresh_map()
@@ -40,7 +41,13 @@ class MainWindow(QMainWindow):
         request = f'{server_address}apikey={API_KEY}&geocode={geocode}&format=json'
         ll = requests.get(request).json()
         address = ll['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']
-        self.address.setText(address)
+        if self.index.isChecked():
+            try:
+                ind = ll['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
+                self.address.setText(f'{address}, {ind}')
+            except: self.address.setText(address)
+        else:
+            self.address.setText(address)
         cr = ll['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['boundedBy'][
         'Envelope']['lowerCorner']
         self.map_ll = [float(i) for i in cr.split()]
