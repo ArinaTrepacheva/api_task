@@ -29,6 +29,7 @@ class MainWindow(QMainWindow):
 
     def delete_point(self):
         self.cords = ''
+        self.address.setText('')
         self.refresh_map()
 
 
