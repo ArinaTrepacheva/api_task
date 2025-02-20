@@ -23,6 +23,17 @@ class MainWindow(QMainWindow):
         self.map_key = ''
         self.refresh_map()
         self.radioButton.toggled.connect(self.refresh_map)
+        self.button.clicked.connect(self.find)
+
+    def find(self):
+        geocode = self.lineEdit.text()
+        API_KEY = "8013b162-6b42-4997-9691-77b7074026e0"
+        server_address = "http://geocode-maps.yandex.ru/1.x/?"
+        request = f'{server_address}apikey={API_KEY}&geocode={geocode}&format=json'
+        ll = requests.get(request).json()['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['boundedBy'][
+        'Envelope']['lowerCorner']
+        self.map_ll = ll.split()
+        self.refresh_map()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp and self.map_zoom < 17:
