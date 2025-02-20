@@ -21,10 +21,16 @@ class MainWindow(QMainWindow):
         self.map_ll = [37.977751, 55.757718]
         self.map_l = 'map'
         self.map_key = ''
-        self.cords = [self.map_ll[:]]
+        self.cords = ''
         self.refresh_map()
         self.radioButton.toggled.connect(self.refresh_map)
         self.button.clicked.connect(self.find)
+        self.dell.clicked.connect(self.delete_point)
+
+    def delete_point(self):
+        self.cords = ''
+        self.refresh_map()
+
 
     def find(self):
         geocode = self.lineEdit.text()
@@ -34,7 +40,7 @@ class MainWindow(QMainWindow):
         ll = requests.get(request).json()['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['boundedBy'][
         'Envelope']['lowerCorner']
         self.map_ll = [float(i) for i in ll.split()]
-        self.cords.append(self.map_ll[:])
+        self.cords = self.map_ll[:]
         self.refresh_map()
 
     def keyPressEvent(self, event):
@@ -70,12 +76,12 @@ class MainWindow(QMainWindow):
         session.mount('http://', adapter)
         session.mount('https://', adapter)
         n = ','.join(map(str, self.map_ll))
-        v = ''
-        for el in self.cords:
-            v += f"{el[0]},{el[1]},pm2rdm"
-            if el != self.cords[-1]:
-                v += '~'
-        d = f"https://static-maps.yandex.ru/v1?ll={n}&l={self.map_l}&z={self.map_zoom}&theme={t}&apikey=f3a0fe3a-b07e-4840-a1da-06f18b2ddf13&pt={v}"
+        point = f"{','.join(map(str, self.cords))}"
+        print(point)
+        if self.cords:
+            d = f"https://static-maps.yandex.ru/v1?ll={n}&l={self.map_l}&z={self.map_zoom}&theme={t}&apikey=f3a0fe3a-b07e-4840-a1da-06f18b2ddf13&pt={point},pm2rdm"
+        else:
+            d = f"https://static-maps.yandex.ru/v1?ll={n}&l={self.map_l}&z={self.map_zoom}&theme={t}&apikey=f3a0fe3a-b07e-4840-a1da-06f18b2ddf13"
         response = session.get(d)
         with open('tmp.png', mode='wb') as tmp:
             tmp.write(response.content)
