@@ -37,9 +37,12 @@ class MainWindow(QMainWindow):
         API_KEY = "8013b162-6b42-4997-9691-77b7074026e0"
         server_address = "http://geocode-maps.yandex.ru/1.x/?"
         request = f'{server_address}apikey={API_KEY}&geocode={geocode}&format=json'
-        ll = requests.get(request).json()['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['boundedBy'][
+        ll = requests.get(request).json()
+        address = ll['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']
+        self.address.setText(address)
+        cr = ll['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['boundedBy'][
         'Envelope']['lowerCorner']
-        self.map_ll = [float(i) for i in ll.split()]
+        self.map_ll = [float(i) for i in cr.split()]
         self.cords = self.map_ll[:]
         self.refresh_map()
 
@@ -77,7 +80,6 @@ class MainWindow(QMainWindow):
         session.mount('https://', adapter)
         n = ','.join(map(str, self.map_ll))
         point = f"{','.join(map(str, self.cords))}"
-        print(point)
         if self.cords:
             d = f"https://static-maps.yandex.ru/v1?ll={n}&l={self.map_l}&z={self.map_zoom}&theme={t}&apikey=f3a0fe3a-b07e-4840-a1da-06f18b2ddf13&pt={point},pm2rdm"
         else:
