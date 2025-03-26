@@ -1,9 +1,9 @@
 import sys
 
-from PyQt5 import uic
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow
+from PyQt6 import uic
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap
+from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
